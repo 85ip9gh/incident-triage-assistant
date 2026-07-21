@@ -1,0 +1,12 @@
+[project]
+name = "incident-triage-assistant"
+version = "0.1.0"
+description = "RAG-based incident triage assistant: retrieves runbooks and asks Claude for a grounded root cause and fix."
+requires-python = ">=3.10"
+readme = "README.md"
+license = { text = "MIT" }
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
