@@ -1,0 +1,62 @@
+[
+  {
+    "name": "hikari-pool-timeout",
+    "incident": "HikariPool-1 - Connection is not available, request timed out after 30000ms. Postgres logs: FATAL: sorry, too many clients already.",
+    "expected_runbook": "database-connection-pool-exhaustion",
+    "expected_severity": "high"
+  },
+  {
+    "name": "pg-connection-slots",
+    "incident": "psql: FATAL: remaining connection slots are reserved for non-replication superuser connections. Requests failing to acquire a connection from the pool.",
+    "expected_runbook": "database-connection-pool-exhaustion",
+    "expected_severity": "high"
+  },
+  {
+    "name": "crashloop-backoff",
+    "incident": "kubectl get pods shows web-7c9 in CrashLoopBackOff. Events: Back-off restarting failed container. The container exits non-zero on startup.",
+    "expected_runbook": "kubernetes-crashloopbackoff",
+    "expected_severity": "high"
+  },
+  {
+    "name": "liveness-probe-restart",
+    "incident": "Liveness probe failed: HTTP probe returned 500; Kubernetes keeps restarting the container on an exponential back-off.",
+    "expected_runbook": "kubernetes-crashloopbackoff",
+    "expected_severity": "medium"
+  },
+  {
+    "name": "oomkilled-137",
+    "incident": "kubectl describe pod: Last State Terminated, Reason OOMKilled, Exit Code 137. Memory limit exceeded; pod restarts under load.",
+    "expected_runbook": "kubernetes-pod-oomkilled",
+    "expected_severity": "high"
+  },
+  {
+    "name": "p99-latency-spike",
+    "incident": "p99 latency spiked to 4s, upstream timeouts, thread pool saturation climbing after the 14:00 deploy.",
+    "expected_runbook": "high-api-latency",
+    "expected_severity": "high"
+  },
+  {
+    "name": "gateway-timeout-queue",
+    "incident": "Clients getting 504 Gateway Timeout, requests queuing, slow responses across the API, throughput dropping.",
+    "expected_runbook": "high-api-latency",
+    "expected_severity": "high"
+  },
+  {
+    "name": "disk-full",
+    "incident": "Writes failing with No space left on device. df -h shows /var at 100%. Log shipping stalled and the database went read-only.",
+    "expected_runbook": "disk-space-exhaustion",
+    "expected_severity": "critical"
+  },
+  {
+    "name": "cert-expired",
+    "incident": "curl: SSL certificate problem: certificate has expired. Services report x509: certificate has expired or is not yet valid; TLS handshake failing.",
+    "expected_runbook": "tls-certificate-expiry",
+    "expected_severity": "critical"
+  },
+  {
+    "name": "kafka-lag",
+    "incident": "Kafka consumer group lag increasing, records-lag-max high, consumers falling behind and rebalancing repeatedly.",
+    "expected_runbook": "kafka-consumer-lag",
+    "expected_severity": "medium"
+  }
+]
