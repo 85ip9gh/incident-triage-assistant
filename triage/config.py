@@ -9,10 +9,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_RUNBOOKS_DIR = REPO_ROOT / "runbooks"
 
-# Default model. Claude Opus 4.8 is the strongest reasoning model; override with
+# Default model. Claude Opus 5 is the strongest reasoning model; override with
 # TRIAGE_MODEL (e.g. claude-sonnet-5 or claude-haiku-4-5) to trade quality for
 # cost/latency on high-volume triage.
-DEFAULT_MODEL = "claude-opus-4-8"
+DEFAULT_MODEL = "claude-opus-5"
 
 
 @dataclass(frozen=True)
