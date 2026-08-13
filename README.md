@@ -110,7 +110,7 @@ The knowledge base loads and **retrieval works with no API key** (use
 
 | Variable            | Default           | Purpose                                             |
 | ------------------- | ----------------- | --------------------------------------------------- |
-| `ANTHROPIC_API_KEY` | –                 | Required to generate a triage.                      |
+| `ANTHROPIC_API_KEY` | n/a               | Required to generate a triage.                      |
 | `TRIAGE_MODEL`      | `claude-opus-5`   | Any Claude model; e.g. `claude-sonnet-5` to cut cost. |
 | `TRIAGE_FALLBACK_MODEL` | `claude-opus-4-8` | Model retried on a policy refusal. Empty to disable. |
 | `TRIAGE_TOP_K`      | `3`               | Number of runbooks fed to the model.                |
@@ -192,4 +192,4 @@ pytest        # 16 offline tests, no API key required
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
