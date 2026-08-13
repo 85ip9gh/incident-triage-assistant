@@ -11,9 +11,36 @@ from dataclasses import dataclass
 
 import anthropic
 
-from .config import Settings, load_settings
+from .config import FALLBACK_BETA_FLAG, Settings, load_settings
 from .knowledge_base import KnowledgeBase, ScoredRunbook
 from .models import TriageResult
+
+
+class TriageRefusedError(RuntimeError):
+    """Raised when safety classifiers declined the request.
+
+    Distinct from a parsing failure. The API returns HTTP 200 with
+    stop_reason="refusal" and empty or partial content, so this is a policy
+    outcome rather than a transport or schema error. If a fallback model was
+    configured, it also declined, since a refusal only reaches the caller once
+    the whole chain has refused.
+    """
+
+    def __init__(self, response: object) -> None:
+        details = getattr(response, "stop_details", None)
+        self.category = getattr(details, "category", None)
+        self.explanation = getattr(details, "explanation", None)
+
+        message = "Claude declined to triage this incident"
+        if self.category:
+            message += f" (category: {self.category})"
+        message += ". Incident text describing malware, intrusion, or exploit "
+        message += "activity can trigger this. Try rephrasing around the "
+        message += "operational symptoms, or set TRIAGE_MODEL to a model with "
+        message += "narrower safeguards."
+        if self.explanation:
+            message += f" API explanation: {self.explanation}"
+        super().__init__(message)
 
 SYSTEM_PROMPT = """\
 You are an experienced site reliability engineer acting as an incident-triage \
@@ -99,14 +126,29 @@ class TriageEngine:
             + "\n\nTriage this incident."
         )
 
-        response = self.client.messages.parse(
+        # The beta endpoint is required for `fallbacks`; it is otherwise the
+        # same call, and `output_format` still gives us a parsed TriageResult.
+        fallbacks = (
+            [{"model": self.settings.fallback_model}]
+            if self.settings.fallback_model
+            else anthropic.NOT_GIVEN
+        )
+        response = self.client.beta.messages.parse(
             model=self.settings.model,
             max_tokens=self.settings.max_tokens,
             system=SYSTEM_PROMPT,
             thinking={"type": "adaptive"},
             messages=[{"role": "user", "content": user_content}],
             output_format=TriageResult,
+            betas=[FALLBACK_BETA_FLAG],
+            fallbacks=fallbacks,
         )
+
+        # Check stop_reason before touching content. A refusal is a successful
+        # HTTP 200 whose content is empty or partial, so reading it first would
+        # report a parsing failure for what is actually a policy decline.
+        if response.stop_reason == "refusal":
+            raise TriageRefusedError(response)
 
         result = response.parsed_output
         if result is None:
