@@ -9,7 +9,7 @@ It is a retrieval-augmented generation (RAG) pipeline built on the Anthropic
 Claude API, with the reasoning constrained to a typed schema so the output is
 always machine-usable.
 
-**Stack:** Python · Claude API (Opus 4.8, structured outputs, adaptive thinking) · pure-Python BM25 retrieval · Streamlit · pytest
+**Stack:** Python · Claude API (Opus 5, structured outputs, adaptive thinking) · pure-Python BM25 retrieval · Streamlit · pytest
 
 ---
 
@@ -111,7 +111,7 @@ The knowledge base loads and **retrieval works with no API key** (use
 | Variable            | Default           | Purpose                                             |
 | ------------------- | ----------------- | --------------------------------------------------- |
 | `ANTHROPIC_API_KEY` | –                 | Required to generate a triage.                      |
-| `TRIAGE_MODEL`      | `claude-opus-4-8` | Any Claude model; e.g. `claude-sonnet-5` to cut cost. |
+| `TRIAGE_MODEL`      | `claude-opus-5`   | Any Claude model; e.g. `claude-sonnet-5` to cut cost. |
 | `TRIAGE_TOP_K`      | `3`               | Number of runbooks fed to the model.                |
 | `TRIAGE_MAX_TOKENS` | `8192`            | Output budget (covers adaptive thinking + answer).  |
 
@@ -145,7 +145,7 @@ that the expected runbook is cited and the severity matches.
   dependencies. Retrieval is transparent, fast, and fully unit-tested offline.
   The `Retriever` protocol is a clean seam: swap in a semantic/embedding
   retriever without touching the engine.
-- **Model-agnostic.** Defaults to Claude Opus 4.8 for the strongest reasoning;
+- **Model-agnostic.** Defaults to Claude Opus 5 for the strongest reasoning;
   one environment variable switches to a cheaper model for high-volume triage.
 - **Adaptive thinking.** The engine enables adaptive thinking so Claude decides
   how much to reason per incident.
