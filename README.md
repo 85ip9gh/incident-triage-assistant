@@ -112,6 +112,7 @@ The knowledge base loads and **retrieval works with no API key** (use
 | ------------------- | ----------------- | --------------------------------------------------- |
 | `ANTHROPIC_API_KEY` | –                 | Required to generate a triage.                      |
 | `TRIAGE_MODEL`      | `claude-opus-5`   | Any Claude model; e.g. `claude-sonnet-5` to cut cost. |
+| `TRIAGE_FALLBACK_MODEL` | `claude-opus-4-8` | Model retried on a policy refusal. Empty to disable. |
 | `TRIAGE_TOP_K`      | `3`               | Number of runbooks fed to the model.                |
 | `TRIAGE_MAX_TOKENS` | `8192`            | Output budget (covers adaptive thinking + answer).  |
 
@@ -147,6 +148,13 @@ that the expected runbook is cited and the severity matches.
   retriever without touching the engine.
 - **Model-agnostic.** Defaults to Claude Opus 5 for the strongest reasoning;
   one environment variable switches to a cheaper model for high-volume triage.
+- **Refusal-aware.** Claude Opus 5 runs elevated cybersecurity safeguards, and
+  incident text describing malware, intrusion, or exploit activity can trip them.
+  A refusal is an HTTP 200 with `stop_reason="refusal"`, not an error, so the
+  engine checks the stop reason before reading content and raises a distinct
+  `TriageRefusedError` rather than reporting a parse failure. A server-side
+  fallback retries the request on `claude-opus-4-8` first, so a refusal only
+  reaches the caller once the whole chain has declined.
 - **Adaptive thinking.** The engine enables adaptive thinking so Claude decides
   how much to reason per incident.
 
